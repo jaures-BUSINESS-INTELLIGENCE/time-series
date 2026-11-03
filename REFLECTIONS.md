@@ -1,4 +1,4 @@
-# TD4 – Reflections
+
 
 ## Stage 0 – Framing
 
@@ -26,4 +26,22 @@ combien de jours je reçois vraiment.
 Le plan avec des données inventées reposait sur une hypothèse que personne n'avait
 vérifiée. Une hypothèse sur les données qui existent est elle-même une affirmation,
 et la vérifier prend quelques minutes.
+-->
+## Stage 1 – Collection
+
+### Reflection 2: My prediction before seeing the data
+
+I predict that CO2 in Le Mans went down over the last 90 days (early August to
+early November). My reasoning: in August it is summer, and from late October it is
+autumn, with a colder and windier weather. I will check this prediction against my
+real data in Stage 3.
+
+<!--
+FR :
+Réflexion 2 : ma prédiction avant de voir les données
+
+Je prédis que le CO2 au Mans a baissé sur les 90 derniers jours (début août à début
+novembre). Mon raisonnement : en août c'est l'été, et à partir de fin octobre c'est
+l'automne, avec un temps plus froid et plus venteux. Je vérifierai cette prédiction
+avec mes vraies données à l'étape 3.
 -->
