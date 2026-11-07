@@ -45,6 +45,8 @@ novembre). Mon raisonnement : en août c'est l'été, et à partir de fin octobr
 l'automne, avec un temps plus froid et plus venteux. Je vérifierai cette prédiction
 avec mes vraies données à l'étape 3.
 -->
+**Follow-up after running the pipeline:** My prediction was wrong. The series went up (+0.1376 ppm/day), not down. I guessed from the seasons, but this is a model estimate with a lot of day-to-day noise, so the season alone did not explain it.
+<!-- Suite après exécution : ma prédiction était fausse. La série a monté, pas baissé. J'ai deviné avec les saisons, mais c'est une estimation de modèle avec beaucoup de bruit d'un jour à l'autre. -->
 ## Stage 2 – Cleaning
 
 ### Reflection 3: Is the gap detection unnecessary if my run finds no gaps?
