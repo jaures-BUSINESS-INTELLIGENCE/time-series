@@ -63,7 +63,9 @@ would be computed on incomplete data without anyone knowing. This is the same da
 as a silent failure: the problem is invisible. The detection code costs only a few
 lines, while the error it prevents can be serious. A real sensor would also drop
 readings from time to time, so the code makes the pipeline reusable with other sources.
+> **Note:** Reflections 2, 4 and 6 use the numbers from my first run, for Le Mans (trend +0.1376 ppm/day, last value 470.5 ppm). In Stage 6 I changed the location to Yaoundé (Reflection 7), so the files in this repository now show different numbers (trend +0.0593 ppm/day, last value 448.1 ppm).
 
+<!-- Note : les réflexions 2, 4 et 6 utilisent les chiffres de ma première exécution, pour Le Mans (tendance +0,1376 ppm/jour, dernière valeur 470,5 ppm). À l'étape 6, j'ai changé le lieu pour Yaoundé (réflexion 7), donc les fichiers de ce dépôt montrent maintenant d'autres chiffres (tendance +0,0593 ppm/jour, dernière valeur 448,1 ppm). -->
 <!--
 FR :
 Réflexion 3 : la détection de trous est-elle inutile si mon exécution n'en trouve aucun ?
