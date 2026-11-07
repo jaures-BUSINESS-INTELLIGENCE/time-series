@@ -64,4 +64,43 @@ fetch('data/series_analysis.json')
       return allDayIndices.map(d => (d in byDayValue ? byDayValue[d] : null));
     }
 
-    // Les 4 séries du
+    // Les 4 séries du graphique
+    const datasets = [
+      { label: `Observed (${unit})`, data: seriesFor(raw), borderColor: '#0d7c9e', backgroundColor: 'transparent', pointRadius: 2, borderWidth: 2 },
+      { label: 'Rolling mean (7-day)', data: seriesFor(rollingMean), borderColor: '#2e8b46', backgroundColor: 'transparent', pointRadius: 0, borderWidth: 2 },
+      { label: 'Exponential smoothing', data: seriesFor(expSmoothed), borderColor: '#8b2ea0', backgroundColor: 'transparent', pointRadius: 0, borderWidth: 1, borderDash: [2, 2] },
+      { label: 'Projection (low confidence)', data: seriesFor(projection), borderColor: '#c46e0a', backgroundColor: 'transparent', pointRadius: 3, borderWidth: 2, borderDash: [6, 4] },
+    ];
+
+    new Chart(document.getElementById('seriesChart'), {
+      type: 'line',
+      data: { labels: allLabels, datasets },
+      options: {
+        plugins: {
+          title: { display: true, text: `Modelled atmospheric CO2 (${unit}) near Le Mans — raw, smoothed, projected (dashed = beyond observed data)` },
+          tooltip: { mode: 'index', intersect: false },
+        },
+        scales: {
+          x: { title: { display: true, text: 'Date' }, ticks: { maxTicksLimit: 12 } },
+          y: { title: { display: true, text: `CO2 (${unit})` } },
+        },
+        interaction: { mode: 'nearest', axis: 'x', intersect: false },
+      },
+    });
+
+    // Âge des données : utile si l'Action échoue (réflexion 5)
+    let ageText = '';
+    if (data.generated_at) {
+      const days = Math.floor((Date.now() - new Date(data.generated_at).getTime()) / 86400000);
+      ageText = ` (${days} day(s) ago)`;
+    }
+    document.getElementById('updated').textContent =
+      `Data last analyzed ${data.generated_at || '(no timestamp)'}${ageText}` +
+      (gaps.length ? ` -- gap(s) detected: ${gaps.map(g => `${g.start_date} to ${g.end_date}`).join(', ')}` : ' -- no gaps in this pull.');
+  })
+  .catch(err => {
+    document.getElementById('kpis').innerHTML = '<p>Could not load analysis (' + err + ').</p>';
+  });
+</script>
+</body>
+</html>
