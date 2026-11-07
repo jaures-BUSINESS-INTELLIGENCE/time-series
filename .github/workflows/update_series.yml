@@ -1,0 +1,28 @@
+name: Update analysis
+
+"on":
+  workflow_dispatch: {}      # lancement manuel
+  schedule:
+    - cron: "0 6 * * 1"      # chaque lundi à 6h UTC : nouvelle fenêtre de 90 jours
+
+permissions:
+  contents: write            # autorise l'Action à enregistrer ses résultats
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - run: python scripts/fetch_series.py      # 1) récupère les données
+      - run: python scripts/analyze_series.py    # 2) nettoie, lisse, projette
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/series.csv docs/data/series_analysis.json
+          git commit -m "Update CO2 series [automated]" || echo "Nothing to commit"
+          git push
