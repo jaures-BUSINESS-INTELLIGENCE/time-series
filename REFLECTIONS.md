@@ -45,3 +45,38 @@ novembre). Mon raisonnement : en août c'est l'été, et à partir de fin octobr
 l'automne, avec un temps plus froid et plus venteux. Je vérifierai cette prédiction
 avec mes vraies données à l'étape 3.
 -->
+## Stage 2 – Cleaning
+
+### Reflection 3: Is the gap detection unnecessary if my run finds no gaps?
+
+No, I would not delete the gap-detection code. My run found no gaps because
+Open-Meteo's air-quality data comes from a model that fills every hour, and my test
+request returned 2,160 hourly values with no empty one. But "this source was clean
+this time" is only an observation. It is not a guarantee that the source will always
+be clean.
+
+My pipeline runs alone every Monday at 6am and nobody watches it. If one day the API
+returned a day without values, a missing day would pass unnoticed, and the trend line
+would be computed on incomplete data without anyone knowing. This is the same danger
+as a silent failure: the problem is invisible. The detection code costs only a few
+lines, while the error it prevents can be serious. A real sensor would also drop
+readings from time to time, so the code makes the pipeline reusable with other sources.
+
+<!--
+FR :
+Réflexion 3 : la détection de trous est-elle inutile si mon exécution n'en trouve aucun ?
+
+Non, je ne supprimerais pas le code de détection de trous. Mon exécution n'a trouvé
+aucun trou parce que les données de qualité de l'air d'Open-Meteo viennent d'un
+modèle qui remplit chaque heure, et ma requête de test a renvoyé 2 160 valeurs
+horaires sans aucune valeur vide. Mais « cette source était propre cette fois » n'est
+qu'une observation. Ce n'est pas une garantie que la source sera toujours propre.
+
+Mon pipeline tourne seul chaque lundi à 6 h et personne ne le surveille. Si un jour
+l'API renvoyait une journée sans valeurs, un jour manquant passerait inaperçu, et la
+droite de tendance serait calculée sur des données incomplètes sans que personne ne
+le sache. C'est le même danger qu'un échec silencieux : le problème est invisible. Le
+code de détection ne coûte que quelques lignes, alors que l'erreur qu'il évite peut
+être grave. Un vrai capteur perdrait aussi des mesures de temps en temps, donc ce
+code rend le pipeline réutilisable avec d'autres sources.
+-->
