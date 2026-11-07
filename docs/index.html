@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CO2 time series lab — cleaning, smoothing, projection</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+  .kpis { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+  .kpi { flex: 1; min-width: 160px; padding: 0.8rem 1rem; border: 1px solid #ccc; border-radius: 8px; }
+  .kpi .value { font-size: 1.5rem; font-weight: bold; color: #0d7c9e; }
+  .kpi .label { font-size: 0.8rem; color: #666; }
+  #honesty { padding: 0.8rem 1rem; border: 2px solid #c46e0a; border-radius: 8px; background: #faf3e8; margin: 1rem 0; color: #222; }
+  canvas { margin-top: 1.5rem; }
+  #updated { color: #666; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+  <h1>CO2 time series lab</h1>
+  <p>Modelled atmospheric CO2 (ppm) for a grid cell near Le Mans, from Open-Meteo's Air Quality API (CAMS model, not a sensor). The page shows raw values, a rolling mean, exponential smoothing and a linear-trend projection, all computed by <code>scripts/analyze_series.py</code> from <code>data/series.csv</code>.</p>
+  <div class="kpis" id="kpis">Loading...</div>
+  <div id="honesty"></div>
+  <canvas id="seriesChart" height="320"></canvas>
+  <p id="updated"></p>
+
+<script>
+// On charge le fichier produit par l'Action (chemin relatif à docs/)
+fetch('data/series_analysis.json')
+  .then(r => r.json())
+  .then(data => {
+    const raw = data.raw || [];
+    if (raw.length === 0) {
+      document.getElementById('kpis').innerHTML = '<p>No analysis yet -- run "Update analysis" from the Actions tab.</p>';
+      return;
+    }
+    const rollingMean = data.rolling_mean || [];
+    const expSmoothed = data.exp_smoothed || [];
+    const projection = data.projection || [];
+    const gaps = data.gaps || [];
+    const unit = data.unit || '';
+
+    // 4 cartes : jours observés, trous détectés, pente par jour, dernière valeur
+    document.getElementById('kpis').innerHTML = `
+      <div class="kpi"><div class="value">${raw.length}</div><div class="label">Observed days</div></div>
+      <div class="kpi"><div class="value">${gaps.length}</div><div class="label">Detected gap(s)</div></div>
+      <div class="kpi"><div class="value">${data.trend_slope_per_day >= 0 ? '+' : ''}${data.trend_slope_per_day} ${unit}</div><div class="label">Trend per day</div></div>
+      <div class="kpi"><div class="value">${raw[raw.length - 1].value} ${unit}</div><div class="label">Most recent reading</div></div>
+    `;
+
+    // Note d'honnêteté (texte écrit par le script d'analyse)
+    document.getElementById('honesty').innerHTML = `<strong>Honesty note:</strong> ${data.honest_note}`;
+
+    // Un seul axe x (dates réelles) pour toutes les séries.
+    // Chaque série vaut null en dehors de sa plage : pas de ligne fausse à zéro.
+    const byDay = {};
+    raw.forEach(r => { byDay[r.day] = r.date; });
+    projection.forEach(p => { byDay[p.day] = p.date; });
+    const allDayIndices = raw.map(r => r.day).concat(projection.map(p => p.day));
+    const allLabels = allDayIndices.map(d => byDay[d]);
+
+    function seriesFor(points) {
+      const byDayValue = Object.fromEntries(points.map(p => [p.day, p.value]));
+      return allDayIndices.map(d => (d in byDayValue ? byDayValue[d] : null));
+    }
+
+    // Les 4 séries du
