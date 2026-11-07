@@ -51,7 +51,7 @@ def aggregate_to_daily(times, values):
     return rows
 
 def main():
-    print(f"Fetching {PAST_DAYS} days of real hourly CO2 (ppm) for Le Mans "
+        print(f"Fetching {PAST_DAYS} days of real hourly CO2 (ppm) for "
           f"({LAT}, {LON}) from Open-Meteo Air Quality API...")
     data = fetch_hourly_co2()
     times = data["hourly"]["time"]
