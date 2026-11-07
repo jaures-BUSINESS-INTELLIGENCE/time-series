@@ -4,7 +4,7 @@ import requests
 # API Open-Meteo "Air Quality" : gratuite, sans clé. Elle donne le CO2 (en ppm) heure
 # par heure, issu d'un MODÈLE de reconstruction de l'atmosphère (pas d'un capteur).
 # "past_days" donne de l'historique réel en UN seul appel (90 jours).
-LAT, LON = 48.0061, 0.1996  # Le Mans
+LAT, LON = 3.8480, 11.5021 # Yaounde
 PAST_DAYS = 90
 URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
 
