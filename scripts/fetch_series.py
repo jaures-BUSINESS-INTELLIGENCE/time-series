@@ -4,7 +4,7 @@ import requests
 # API Open-Meteo "Air Quality" : gratuite, sans clé. Elle donne le CO2 (en ppm) heure
 # par heure, issu d'un MODÈLE de reconstruction de l'atmosphère (pas d'un capteur).
 # "past_days" donne de l'historique réel en UN seul appel (90 jours).
-LAT, LON = 3.8480, 11.5021 # Yaounde
+LAT, LON = 3.8480, 11.5021  # Yaoundé
 PAST_DAYS = 90
 URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
 
@@ -51,7 +51,7 @@ def aggregate_to_daily(times, values):
     return rows
 
 def main():
-        print(f"Fetching {PAST_DAYS} days of real hourly CO2 (ppm) for "
+    print(f"Fetching {PAST_DAYS} days of real hourly CO2 (ppm) for "
           f"({LAT}, {LON}) from Open-Meteo Air Quality API...")
     data = fetch_hourly_co2()
     times = data["hourly"]["time"]
