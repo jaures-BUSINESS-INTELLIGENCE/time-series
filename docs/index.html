@@ -18,7 +18,7 @@
 </head>
 <body>
   <h1>CO2 time series lab</h1>
-  <p>Modelled atmospheric CO2 (ppm) for a grid cell near Le Mans, from Open-Meteo's Air Quality API (CAMS model, not a sensor). The page shows raw values, a rolling mean, exponential smoothing and a linear-trend projection, all computed by <code>scripts/analyze_series.py</code> from <code>data/series.csv</code>.</p>
+  <p>Modelled atmospheric CO2 (ppm) for a grid cell near Yaoundé, from Open-Meteo's Air Quality API (CAMS model, not a sensor). The page shows raw values, a rolling mean, exponential smoothing and a linear-trend projection, all computed by <code>scripts/analyze_series.py</code> from <code>data/series.csv</code>.</p>
   <div class="kpis" id="kpis">Loading...</div>
   <div id="honesty"></div>
   <canvas id="seriesChart" height="320"></canvas>
@@ -77,7 +77,7 @@ fetch('data/series_analysis.json')
       data: { labels: allLabels, datasets },
       options: {
         plugins: {
-          title: { display: true, text: `Modelled atmospheric CO2 (${unit}) near Le Mans — raw, smoothed, projected (dashed = beyond observed data)` },
+          title: { display: true, text: `Modelled atmospheric CO2 (${unit}) near Yaoundé — raw, smoothed, projected (dashed = beyond observed data)` },
           tooltip: { mode: 'index', intersect: false },
         },
         scales: {
