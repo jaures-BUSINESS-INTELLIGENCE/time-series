@@ -100,3 +100,33 @@ La moyenne glissante (fenêtre 7) donne le même poids aux 7 derniers jours et i
 Le lissage exponentiel (alpha 0,3) donne plus de poids aux jours récents et moins aux anciens. Il réagit plus vite à un vrai changement. Je l'utiliserais pour repérer tôt un changement, par exemple dans un système d'alerte.
 Mes données le montrent bien. Sur les derniers jours, le CO2 est passé de 449,6 à 459,5 puis à 470,5. La moyenne glissante n'est passée que de 450,3 à 453,49, car les 5 jours plus anciens la tirent en arrière. Le lissage exponentiel est passé de 451,78 à 457,4, il suit donc mieux le saut.
 Le prix de cette rapidité : le lissage exponentiel peut aussi suivre un pic d'un seul jour qui n'est que du bruit. Donc : moyenne glissante pour la stabilité, lissage exponentiel pour la rapidité. Avec un alpha élevé il est plus rapide mais plus bruité, avec un alpha faible plus calme mais plus lent. -->
+### Reflection 5 — What if the API fails on every retry?
+
+If the Open-Meteo API fails on all 4 attempts, `fetch_series.py` raises a `RuntimeError`. This makes the first step of the Action fail, so the job stops and turns red.
+
+Because the workflow has no `if: always()` and no `continue-on-error`, the next steps do not run. `analyze_series.py` does not run, and the "Commit updated data" step does not run either. So nothing is committed.
+
+As a result, `data/series.csv` and `docs/data/series_analysis.json` keep the values from the last successful run. They are not deleted and not half-written. The dashboard keeps showing the old data, and `generated_at` keeps the old date. The data is stale, but it is not wrong.
+
+I think this is the right behaviour. A visible failure warns me that something is wrong, and old but correct data is better than an empty or broken file. The weakness is that nobody is told: I only see the red run if I look at the Actions tab. A possible improvement would be to show the age of the data on the dashboard (for example, "last updated 9 days ago").
+
+<!-- Réflexion 5 — Et si l'API échoue à chaque essai ?
+Si l'API Open-Meteo échoue aux 4 tentatives, `fetch_series.py` lève une `RuntimeError`. La première étape de l'Action échoue donc, le job s'arrête et devient rouge.
+Comme le workflow n'a ni `if: always()` ni `continue-on-error`, les étapes suivantes ne s'exécutent pas. `analyze_series.py` ne tourne pas, et l'étape « Commit updated data » non plus. Rien n'est donc enregistré.
+Résultat : `data/series.csv` et `docs/data/series_analysis.json` gardent les valeurs de la dernière exécution réussie. Ils ne sont ni supprimés ni à moitié écrits. Le dashboard continue d'afficher les anciennes données, et `generated_at` garde l'ancienne date. Les données sont périmées, mais pas fausses.
+Je pense que c'est le bon comportement. Un échec visible me prévient qu'il y a un problème, et des données anciennes mais correctes valent mieux qu'un fichier vide ou cassé. La faiblesse : personne n'est prévenu, je ne vois le run rouge que si je regarde l'onglet Actions. Une amélioration possible serait d'afficher l'âge des données sur le dashboard (par exemple « mis à jour il y a 9 jours »). -->
+### Reflection 6 — How many days would I trust the projection?
+
+I would trust the projection for about 1 to 3 days at most, and only as a rough direction, not as an exact number.
+
+The first reason is noise. The daily values are about 6 ppm away from the trend line on average, and sometimes more than 20 ppm. But the projection only goes up by 0.8 ppm in 7 days (from 448.4 to 449.2). This small change is much smaller than the noise of one day, so the numbers cannot be trusted.
+
+The second reason is that the line is fragile. It starts at 448.4, but the last real value is 470.5. If I remove the last 2 days, the projection drops to about 446.8. So two days are enough to change the result.
+
+The third reason is the data itself: it comes from a model (CAMS) and not from a sensor, the window is only 90 days, and CO2 has a seasonal cycle that a straight line cannot see. I would trust the projection more with a longer history and a model that includes seasons.
+
+<!-- Réflexion 6 — Combien de jours ferais-je confiance à la projection ?
+Je ferais confiance à la projection pendant 1 à 3 jours au maximum, et seulement comme une direction approximative, pas comme un chiffre exact.
+La première raison est le bruit. Les valeurs journalières s'écartent en moyenne d'environ 6 ppm de la droite de tendance, et parfois de plus de 20 ppm. Or la projection ne monte que de 0,8 ppm en 7 jours (de 448,4 à 449,2). Ce petit changement est bien plus petit que le bruit d'une seule journée, donc les chiffres ne sont pas fiables.
+La deuxième raison est que la droite est fragile. Elle démarre à 448,4, mais la dernière valeur réelle est 470,5. Si je retire les 2 derniers jours, la projection tombe à environ 446,8. Deux jours suffisent donc à changer le résultat.
+La troisième raison concerne les données : elles viennent d'un modèle (CAMS) et non d'un capteur, la fenêtre n'est que de 90 jours, et le CO2 a un cycle saisonnier qu'une droite ne voit pas. Je ferais plus confiance à la projection avec un historique plus long et un modèle qui inclut les saisons. -->
