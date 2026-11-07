@@ -82,3 +82,21 @@ code de détection ne coûte que quelques lignes, alors que l'erreur qu'il évit
 être grave. Un vrai capteur perdrait aussi des mesures de temps en temps, donc ce
 code rend le pipeline réutilisable avec d'autres sources.
 -->
+### Reflection 4 — Rolling mean or exponential smoothing?
+
+Both methods make a noisy series smoother, but they react differently to new data.
+
+The rolling mean (window 7) gives the same weight to the last 7 days and ignores older days. It is stable and easy to explain. I would use it when the data is noisy and I want a calm, simple trend, for example for a weekly report.
+
+Exponential smoothing (alpha 0.3) gives more weight to recent days and less to old ones. It reacts faster to a real change. I would use it when I want to notice a change early, for example an alert system.
+
+My data shows this clearly. On the last days, the CO2 value jumped from 449.6 to 459.5 and then to 470.5. The rolling mean only went from 450.3 to 453.49, because the 5 older days pull it back. The exponential smoothing went from 451.78 to 457.4, so it follows the jump more closely.
+
+The price of reacting faster is that exponential smoothing can also follow a one-day spike that is only noise. So: rolling mean when I want stability, exponential smoothing when I want speed. With a high alpha it is faster but noisier, and with a low alpha it is calmer but slower.
+
+<!-- Réflexion 4 — Moyenne glissante ou lissage exponentiel ?
+Les deux méthodes lissent une série bruitée, mais elles réagissent différemment aux nouvelles données.
+La moyenne glissante (fenêtre 7) donne le même poids aux 7 derniers jours et ignore les plus anciens. Elle est stable et facile à expliquer. Je l'utiliserais quand les données sont bruitées et que je veux une tendance calme et simple, par exemple pour un rapport hebdomadaire.
+Le lissage exponentiel (alpha 0,3) donne plus de poids aux jours récents et moins aux anciens. Il réagit plus vite à un vrai changement. Je l'utiliserais pour repérer tôt un changement, par exemple dans un système d'alerte.
+Mes données le montrent bien. Sur les derniers jours, le CO2 est passé de 449,6 à 459,5 puis à 470,5. La moyenne glissante n'est passée que de 450,3 à 453,49, car les 5 jours plus anciens la tirent en arrière. Le lissage exponentiel est passé de 451,78 à 457,4, il suit donc mieux le saut.
+Le prix de cette rapidité : le lissage exponentiel peut aussi suivre un pic d'un seul jour qui n'est que du bruit. Donc : moyenne glissante pour la stabilité, lissage exponentiel pour la rapidité. Avec un alpha élevé il est plus rapide mais plus bruité, avec un alpha faible plus calme mais plus lent. -->
